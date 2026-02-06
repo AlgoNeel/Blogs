@@ -184,29 +184,8 @@
     </footer>
 
     <script>
-        /**
-         * =========================================================================
-         * AREA TO ADD NEW POSTS (The database of your blog)
-         * =========================================================================
-         * To add a new post, copy the block below and paste it into the array:
-         * * { 
-         * id: 10, 
-         * category: 'article', 
-         * color: 'emerald', // emerald for article, blue for research, purple for thinking
-         * title: "The Title of Your Post", 
-         * excerpt: "Short summary that appears on the card grid...", 
-         * date: "Feb 07, 2026",
-         * fullContent: `
-         * <h1 class="text-4xl font-bold text-white mb-6">Full Title Here</h1>
-         * <div class="prose prose-invert max-w-none text-slate-300 space-y-6 leading-loose text-lg">
-         * <p>Your full article content starts here. You can use <p> tags and other HTML.</p>
-         * </div>
-         * `
-         * }
-         */
         const allPosts = [
             { 
-                { 
                 id: 2, 
                 category: 'thinking', 
                 color: 'purple',
@@ -260,7 +239,6 @@
                 date: "Dec 20, 2025",
                 fullContent: `<h1 class="text-4xl font-bold text-white mb-6">Metaphor as a Cognitive Tool</h1><p class="text-slate-300 text-lg leading-loose">Researching the cognitive science behind literary devices.</p>`
             }
-            // ADD MORE POSTS ABOVE THIS LINE
         ];
 
         let currentPage = 1;
@@ -289,11 +267,11 @@
             grid.innerHTML = '';
             
             if (paginated.length === 0) {
-                grid.innerHTML = `<div class="col-span-full py-20 text-center text-slate-500">No posts found matching your criteria.</div>`;
+                grid.innerHTML = `<div class="col-span-full py-20 text-center text-slate-500 font-medium">No posts found matching your criteria.</div>`;
             } else {
                 paginated.forEach((post, index) => {
                     const card = `
-                        <article class="reveal post-card glass-card rounded-2xl overflow-hidden flex flex-col active" style="transition-delay: ${index * 50}ms">
+                        <article class="reveal glass-card rounded-2xl overflow-hidden flex flex-col active" style="transition-delay: ${index * 50}ms">
                             <div class="p-6 flex flex-col h-full">
                                 <div class="flex items-center gap-2 mb-4">
                                     <span class="text-[10px] font-bold tracking-widest uppercase px-2 py-1 bg-${post.color}-500/10 text-${post.color}-400 rounded">${post.category}</span>
@@ -315,14 +293,15 @@
             document.getElementById('prev-btn').disabled = currentPage === 1;
             document.getElementById('next-btn').disabled = currentPage === totalPages;
             
-            setTimeout(reveal, 50);
+            setTimeout(reveal, 100);
         }
 
         function setFilter(category) {
             currentFilter = category;
             currentPage = 1;
             document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.innerText.toLowerCase().includes(category));
+                const isMatch = category === 'all' ? btn.innerText.toLowerCase().includes('all') : btn.innerText.toLowerCase().includes(category);
+                btn.classList.toggle('active', isMatch);
             });
             renderPosts();
         }
@@ -350,7 +329,7 @@
                 <div class="flex items-center gap-4 text-slate-500 mb-10 pb-6 border-b border-white/5">
                     <span>Swapneel Das</span> • <span>${post.date}</span>
                 </div>
-                <div class="post-body">
+                <div class="post-body prose prose-invert max-w-none text-slate-300">
                     ${post.fullContent}
                 </div>
             `;

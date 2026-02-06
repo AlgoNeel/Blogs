@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insights & Research | Swapneel Das</title>
+    <link rel="icon" type="image/jpeg" href="1.jpeg">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --card-dark: #1e293b;
+            --accent-blue: #3b82f6;
+            --text-gray: #94a3b8;
+        }
+
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 10px;
+            border: 2px solid var(--bg-dark);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: #f1f5f9;
+            scroll-behavior: smooth;
+        }
+        h1, h2, h3, .brand-font { font-family: 'Outfit', sans-serif; }
+        
+        .glass-card {
+            background: rgba(30, 41, 59, 0.5);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s ease;
+        }
+        .glass-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent-blue);
+            background: rgba(30, 41, 59, 0.8);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #60a5fa 0%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .filter-btn.active {
+            background-color: var(--accent-blue);
+            color: white;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+        }
+
+        #reading-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(to right, #3b82f6, #a855f7);
+            width: 0%;
+            z-index: 100;
+        }
+
+        .blog-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1000;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            overflow-y: auto;
+        }
+        .blog-modal.active { display: block; }
+
+        .reveal { transform: translateY(20px); opacity: 0; transition: all 0.4s ease-out; }
+        .reveal.active { transform: translateY(0); opacity: 1; }
+
+        .blob {
+            position: fixed;
+            width: 500px;
+            height: 500px;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(168, 85, 247, 0.05) 100%);
+            filter: blur(100px);
+            border-radius: 50%;
+            z-index: -1;
+        }
+
+        .search-input {
+            background: rgba(30, 41, 59, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            background: rgba(30, 41, 59, 0.8);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <div id="reading-progress"></div>
+    <div class="blob -top-48 -left-48"></div>
+    <div class="blob -bottom-48 -right-48"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full bg-slate-900/80 backdrop-blur-xl z-50 border-b border-white/5">
+        <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+            <a href="index.html" class="brand-font font-bold text-xl tracking-tight text-blue-400">Swapneel Das.</a>
+            <div class="flex space-x-6 font-medium text-slate-400">
+                <a href="index.html" class="hover:text-white transition-colors">Portfolio</a>
+                <a href="#" class="text-white border-b-2 border-blue-500">Blog</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="pt-32 pb-12 px-6">
+        <div class="max-w-4xl mx-auto text-center">
+            <h1 class="reveal text-4xl md:text-6xl font-bold mb-6 text-white">Words & <span class="gradient-text">Writings</span></h1>
+            
+            <!-- Search Bar -->
+            <div class="reveal max-w-xl mx-auto mb-10 relative">
+                <input type="text" id="blog-search" placeholder="Search articles, research or ideas..." 
+                       class="search-input w-full px-6 py-4 rounded-2xl text-white placeholder-slate-500 pr-12">
+                <svg class="w-6 h-6 text-slate-500 absolute right-4 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+            </div>
+            
+            <!-- Filters -->
+            <div class="reveal flex flex-wrap justify-center gap-3">
+                <button onclick="setFilter('all')" class="filter-btn active px-6 py-2 rounded-full border border-white/10 text-sm font-medium transition-all">All Posts</button>
+                <button onclick="setFilter('article')" class="filter-btn px-6 py-2 rounded-full border border-white/10 text-sm font-medium transition-all">Articles</button>
+                <button onclick="setFilter('research')" class="filter-btn px-6 py-2 rounded-full border border-white/10 text-sm font-medium transition-all">Research</button>
+                <button onclick="setFilter('thinking')" class="filter-btn px-6 py-2 rounded-full border border-white/10 text-sm font-medium transition-all">Thinking</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Blog Grid -->
+    <main class="max-w-6xl mx-auto px-6 pb-12">
+        <div id="blog-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 min-h-[400px]">
+            <!-- Content Injected via JS -->
+        </div>
+
+        <!-- Pagination -->
+        <div id="pagination" class="reveal mt-16 flex justify-center items-center gap-6">
+            <button onclick="changePage(-1)" id="prev-btn" class="p-3 rounded-full glass-card hover:text-blue-400 disabled:opacity-30 disabled:cursor-not-allowed">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+            </button>
+            <span id="page-info" class="text-sm font-medium text-slate-400 tracking-widest uppercase">Page 1 of 1</span>
+            <button onclick="changePage(1)" id="next-btn" class="p-3 rounded-full glass-card hover:text-blue-400 disabled:opacity-30 disabled:cursor-not-allowed">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            </button>
+        </div>
+    </main>
+
+    <!-- Post Viewer Modal -->
+    <div id="post-viewer" class="blog-modal">
+        <div class="max-w-3xl mx-auto px-6 py-20">
+            <button onclick="closePost()" class="mb-8 flex items-center gap-2 text-slate-400 hover:text-white transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                </svg>
+                Back to Feed
+            </button>
+            <div id="post-content"></div>
+        </div>
+    </div>
+
+    <footer class="py-12 border-t border-white/5 bg-slate-950 text-center">
+        <p class="text-slate-500 text-sm">© 2026 Swapneel Das. Exploring the written word.</p>
+    </footer>
+
+    <script>
+        /**
+         * =========================================================================
+         * AREA TO ADD NEW POSTS (The database of your blog)
+         * =========================================================================
+         * To add a new post, copy the block below and paste it into the array:
+         * * { 
+         * id: 10, 
+         * category: 'article', 
+         * color: 'emerald', // emerald for article, blue for research, purple for thinking
+         * title: "The Title of Your Post", 
+         * excerpt: "Short summary that appears on the card grid...", 
+         * date: "Feb 07, 2026",
+         * fullContent: `
+         * <h1 class="text-4xl font-bold text-white mb-6">Full Title Here</h1>
+         * <div class="prose prose-invert max-w-none text-slate-300 space-y-6 leading-loose text-lg">
+         * <p>Your full article content starts here. You can use <p> tags and other HTML.</p>
+         * </div>
+         * `
+         * }
+         */
+        const allPosts = [
+            { 
+                id: 1, 
+                category: 'research', 
+                color: 'blue',
+                title: "Post-Colonial Echoes in South Asian Literature", 
+                excerpt: "An analysis of how contemporary writers are reshaping identity and language in a globalized world.", 
+                date: "Feb 05, 2026",
+                fullContent: `
+                    <h1 class="text-4xl font-bold text-white mb-6">Post-Colonial Echoes in South Asian Literature</h1>
+                    <div class="prose prose-invert max-w-none text-slate-300 space-y-6 leading-loose text-lg">
+                        <p>The landscape of South Asian literature has undergone a seismic shift in the 21st century. No longer confined to the shadow of colonial narratives, modern writers are reclaiming language to express unique cultural nuances.</p>
+                        <p>This research focuses on the "hybridity" of English as used by regional authors, transforming it from a colonial tool to a local vessel for history and trauma.</p>
+                    </div>
+                `
+            },
+            { 
+                id: 2, 
+                category: 'thinking', 
+                color: 'purple',
+                title: "The Discipline of Observation", 
+                excerpt: "Why the quietest moments of our day yield the most profound insights into our research and growth.", 
+                date: "Jan 28, 2026",
+                fullContent: `<h1 class="text-4xl font-bold text-white mb-6">The Discipline of Observation</h1><p class="text-slate-300 text-lg leading-loose">Observation is a skill often overlooked. As a student of literature, I've found that the ability to truly see—not just look—is the foundation of all critical thinking.</p>`
+            },
+            { 
+                id: 3, 
+                category: 'article', 
+                color: 'emerald',
+                title: "English Honours: More Than Just Books", 
+                excerpt: "Reflecting on how literature shapes analytical thinking and professional versatility in today's world.", 
+                date: "Jan 15, 2026",
+                fullContent: `<h1 class="text-4xl font-bold text-white mb-6">English Honours: More Than Just Books</h1><p class="text-slate-300 text-lg leading-loose">Studying English at the National University has taught me that critical analysis is a superpower applicable to everything from marketing to policy-making.</p>`
+            },
+            { 
+                id: 4, 
+                category: 'research', 
+                color: 'blue',
+                title: "Structuralism vs Post-Structuralism", 
+                excerpt: "A comparative study on linguistic structures and the fluidity of meaning in textual analysis.", 
+                date: "Jan 10, 2026",
+                fullContent: `<h1 class="text-4xl font-bold text-white mb-6">Structuralism vs Post-Structuralism</h1><p class="text-slate-300 text-lg leading-loose">A deep dive into how meaning is constructed and then deconstructed within literary theory.</p>`
+            },
+            { 
+                id: 5, 
+                category: 'thinking', 
+                color: 'purple',
+                title: "The Future of Digital Literacy", 
+                excerpt: "How technology is changing the way we consume classic texts and interact with literary archives.", 
+                date: "Jan 05, 2026",
+                fullContent: `<h1 class="text-4xl font-bold text-white mb-6">The Future of Digital Literacy</h1><p class="text-slate-300 text-lg leading-loose">Examining the intersection of humanities and technology in the digital age.</p>`
+            },
+            { 
+                id: 6, 
+                category: 'article', 
+                color: 'emerald',
+                title: "Writing in the Age of AI", 
+                excerpt: "Can machines replicate the human soul and emotional depth required for literary expression?", 
+                date: "Jan 01, 2026",
+                fullContent: `<h1 class="text-4xl font-bold text-white mb-6">Writing in the Age of AI</h1><p class="text-slate-300 text-lg leading-loose">Reflecting on the unique value of human-led narrative in an automated world.</p>`
+            },
+            { 
+                id: 7, 
+                category: 'research', 
+                color: 'blue',
+                title: "Metaphor as a Cognitive Tool", 
+                excerpt: "How metaphors shape our understanding of reality and influence our daily decision-making.", 
+                date: "Dec 20, 2025",
+                fullContent: `<h1 class="text-4xl font-bold text-white mb-6">Metaphor as a Cognitive Tool</h1><p class="text-slate-300 text-lg leading-loose">Researching the cognitive science behind literary devices.</p>`
+            }
+            // ADD MORE POSTS ABOVE THIS LINE
+        ];
+
+        let currentPage = 1;
+        const postsPerPage = 6;
+        let currentFilter = 'all';
+        let searchQuery = '';
+
+        const grid = document.getElementById('blog-grid');
+        const searchInput = document.getElementById('blog-search');
+
+        function renderPosts() {
+            const filtered = allPosts.filter(p => {
+                const matchesFilter = currentFilter === 'all' || p.category === currentFilter;
+                const matchesSearch = p.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                                     p.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
+                return matchesFilter && matchesSearch;
+            });
+
+            const totalPages = Math.ceil(filtered.length / postsPerPage) || 1;
+            if (currentPage > totalPages) currentPage = totalPages;
+
+            const start = (currentPage - 1) * postsPerPage;
+            const end = start + postsPerPage;
+            const paginated = filtered.slice(start, end);
+
+            grid.innerHTML = '';
+            
+            if (paginated.length === 0) {
+                grid.innerHTML = `<div class="col-span-full py-20 text-center text-slate-500">No posts found matching your criteria.</div>`;
+            } else {
+                paginated.forEach((post, index) => {
+                    const card = `
+                        <article class="reveal post-card glass-card rounded-2xl overflow-hidden flex flex-col active" style="transition-delay: ${index * 50}ms">
+                            <div class="p-6 flex flex-col h-full">
+                                <div class="flex items-center gap-2 mb-4">
+                                    <span class="text-[10px] font-bold tracking-widest uppercase px-2 py-1 bg-${post.color}-500/10 text-${post.color}-400 rounded">${post.category}</span>
+                                </div>
+                                <h3 class="text-xl font-bold text-white mb-3 hover:text-blue-400 transition-colors cursor-pointer" onclick="openPost(${post.id})">${post.title}</h3>
+                                <p class="text-slate-400 text-sm leading-relaxed mb-6">${post.excerpt}</p>
+                                <div class="mt-auto pt-6 border-t border-white/5 flex justify-between items-center">
+                                    <span class="text-xs text-slate-500">${post.date}</span>
+                                    <button onclick="openPost(${post.id})" class="text-blue-400 text-sm font-semibold hover:underline">Read More →</button>
+                                </div>
+                            </div>
+                        </article>
+                    `;
+                    grid.insertAdjacentHTML('beforeend', card);
+                });
+            }
+
+            document.getElementById('page-info').innerText = `Page ${currentPage} of ${totalPages}`;
+            document.getElementById('prev-btn').disabled = currentPage === 1;
+            document.getElementById('next-btn').disabled = currentPage === totalPages;
+            
+            setTimeout(reveal, 50);
+        }
+
+        function setFilter(category) {
+            currentFilter = category;
+            currentPage = 1;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.innerText.toLowerCase().includes(category));
+            });
+            renderPosts();
+        }
+
+        function changePage(dir) {
+            currentPage += dir;
+            window.scrollTo({ top: 300, behavior: 'smooth' });
+            renderPosts();
+        }
+
+        searchInput.addEventListener('input', (e) => {
+            searchQuery = e.target.value;
+            currentPage = 1;
+            renderPosts();
+        });
+
+        function openPost(id) {
+            const post = allPosts.find(p => p.id === id);
+            const contentArea = document.getElementById('post-content');
+            
+            contentArea.innerHTML = `
+                <div class="mb-4">
+                     <span class="text-[10px] font-bold tracking-widest uppercase px-2 py-1 bg-${post.color}-500/10 text-${post.color}-400 rounded">${post.category}</span>
+                </div>
+                <div class="flex items-center gap-4 text-slate-500 mb-10 pb-6 border-b border-white/5">
+                    <span>Swapneel Das</span> • <span>${post.date}</span>
+                </div>
+                <div class="post-body">
+                    ${post.fullContent}
+                </div>
+            `;
+            
+            document.getElementById('post-viewer').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePost() {
+            document.getElementById('post-viewer').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        function reveal() {
+            const reveals = document.querySelectorAll(".reveal");
+            reveals.forEach(el => {
+                const windowHeight = window.innerHeight;
+                const elementTop = el.getBoundingClientRect().top;
+                if (elementTop < windowHeight - 50) el.classList.add("active");
+            });
+        }
+
+        window.onscroll = () => {
+            let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            let scrolled = (winScroll / height) * 100;
+            const progress = document.getElementById("reading-progress");
+            if(progress) progress.style.width = scrolled + "%";
+            reveal();
+        };
+
+        window.onload = renderPosts;
+    </script>
+</body>
+</html>

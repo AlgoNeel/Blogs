@@ -231,14 +231,18 @@
                 fullContent: `<h1 class="text-4xl font-bold text-white mb-6">Writing in the Age of AI</h1><p class="text-slate-300 text-lg leading-loose">Reflecting on the unique value of human-led narrative in an automated world.</p>`
             },
             { 
-                id: 7, 
-                category: 'research', 
-                color: 'blue',
-                title: "Metaphor as a Cognitive Tool", 
-                excerpt: "How metaphors shape our understanding of reality and influence our daily decision-making.", 
-                date: "Dec 20, 2025",
-                fullContent: `<h1 class="text-4xl font-bold text-white mb-6">Metaphor as a Cognitive Tool</h1><p class="text-slate-300 text-lg leading-loose">Researching the cognitive science behind literary devices.</p>`
-            }
+    id: 1, 
+    category: 'article', 
+    color: 'emerald',
+    title: "The Epstein Files: Power, Silence, and the Architecture of Modern Scandal", 
+    excerpt: "The Epstein files are not just about one man’s crimes—they expose a deeper system where power protects itself, truth moves slowly, and justice remains selectively applied. What we uncover is less a mystery and more a mirror of how influence really works.", 
+    date: "Feb 07, 2026",
+    fullContent: `
+        <h1 class="text-4xl font-bold text-white mb-6">The Epstein Files: Power, Silence, and the Architecture of Modern Scandal</h1>
+        <p class="text-slate-300 text-lg leading-loose">${safeContent.split('
+').filter(p => p.trim() !== '').join('</p>\n        <p class="text-slate-300 text-lg leading-loose">')}</p>
+    `
+},
         ];
 
         let currentPage = 1;
